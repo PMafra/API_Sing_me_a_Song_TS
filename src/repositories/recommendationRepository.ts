@@ -1,7 +1,8 @@
 import connection from "../database";
+import Recommendation from '../protocols/Recommendation';
 
 export async function create(name: string, youtubeLink: string, score: number) {
-  await connection.query(
+  return await connection.query(
     `
     INSERT INTO recommendations
     (name, "youtubeLink", score)
@@ -12,7 +13,7 @@ export async function create(name: string, youtubeLink: string, score: number) {
   );
 }
 
-export async function findById(id: number) {
+export async function findById(id: number): Promise<Recommendation>  {
   const result = await connection.query(
     `
     SELECT * FROM recommendations WHERE id = $1
@@ -45,7 +46,7 @@ export async function findRecommendations(
   minScore: number,
   maxScore: number = Infinity,
   orderBy: string = ""
-) {
+): Promise<Recommendation[]> {
   let where = "";
   let params = [minScore];
 
