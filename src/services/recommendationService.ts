@@ -51,5 +51,5 @@ export async function getRandomRecommendation() {
 
 async function changeRecommendationScore(id: number, increment: number) {
   const result = await recommendationRepository.incrementScore(id, increment);
-  return result.rowCount === 0 ? null : result;
+  return result === 0 ? null : result;
 }

@@ -1,16 +1,17 @@
 import connection from "../database";
 import Recommendation from '../protocols/Recommendation';
 
-export async function create(name: string, youtubeLink: string, score: number) {
-  return await connection.query(
+export async function create(name: string, youtubeLink: string, score: number): Promise<Recommendation> {
+  const result = await connection.query(
     `
     INSERT INTO recommendations
     (name, "youtubeLink", score)
     VALUES
-    ($1, $2, $3)
+    ($1, $2, $3) RETURNING *
   `,
     [name, youtubeLink, score]
   );
+    return result.rows[0];
 }
 
 export async function findById(id: number): Promise<Recommendation>  {
@@ -24,22 +25,25 @@ export async function findById(id: number): Promise<Recommendation>  {
   return result.rows[0];
 }
 
-export async function incrementScore(id: number, increment: number) {
-  return await connection.query(
+export async function incrementScore(id: number, increment: number): Promise<number> {
+  const result = await connection.query(
     `
     UPDATE recommendations SET score = score + $1 WHERE id = $2
   `,
     [increment, id]
   );
+
+  return result.rowCount;
 }
 
-export async function destroy(id: number) {
-  return await connection.query(
+export async function destroy(id: number): Promise<Recommendation> {
+  const result = await connection.query(
     `
-    DELETE FROM recommendations WHERE id = $1
+    DELETE FROM recommendations WHERE id = $1 RETURNING *
   `,
     [id]
   );
+  return result.rows[0];
 }
 
 export async function findRecommendations(
