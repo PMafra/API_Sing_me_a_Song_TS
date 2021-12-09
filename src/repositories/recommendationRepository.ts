@@ -66,7 +66,7 @@ export async function findRecommendations(
   if (orderBy) {
     query += ` ORDER BY ${orderBy}`;
   }
-
+  
   const result = await connection.query(query, params);
 
   return result.rows;
